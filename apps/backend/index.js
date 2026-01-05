@@ -10,13 +10,24 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
+// -------------------------
+app.use((req, _res, next) => {
+  console.log("Incoming:", req.method, req.url);
+  next();
+});
+
+
 app.get("/api/health", (req, res) => {
+  console.log("Received request for /api/health");
   res.json({ status: "ok" });
 });
 
+
 app.post("/api/automation", upload.single("file"), async (req, res) => {
+  console.log("Received request for /api/automation");
   try {
     if (!req.file) {
+      console.log("No file uploaded");
       return res.status(400).json({ error: "PDF required" });
     }
 
@@ -29,13 +40,14 @@ app.post("/api/automation", upload.single("file"), async (req, res) => {
     );
     formData.append("action", req.body.action ?? "process_pdf");
 
-    const response = await fetch('https://jemartinez.app.n8n.cloud/webhook-test/e3510cf8-ab93-4827-850e-d3a3b919d72c', {
+    console.log(formData.get("file"));
+
+    const response = await fetch('https://mvpcs.app.n8n.cloud/webhook-test/f0b70d5f-220d-4593-b3ba-670edcbdaab6', {
       method: "POST",
       headers: {
-        "X-Internal-Token": process.env.N8N_SECRET
         // NO setear Content-Type manualmente
       },
-      body: formData
+      body: formData.get("file") ? formData : null,
     });
 
     const contentType = response.headers.get("content-type") || "";

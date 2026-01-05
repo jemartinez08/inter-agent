@@ -25,29 +25,39 @@
                 {{ error }}
             </p>
 
-            <pre v-if="response" class="response">
-{{ response }}
-      </pre>
+            <!-- <pre v-if="response" class="response">
+                {{ response }}
+            </pre> -->
+
+            <div v-if="response" class="response markdown-body" v-html="renderedMarkdown"></div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { marked } from "marked";
+import DOMPurify from "dompurify";
 
 const file = ref<File | null>(null);
 const loading = ref(false);
 const error = ref<string | null>(null);
-const response = ref<any>(null);
+const response = ref<{ response: string } | null>(null);
 const isDragging = ref(false);
+
+const renderedMarkdown = computed(() => {
+    if (!response.value) return "";
+    const html: any = marked.parse(response.value.response);
+    return DOMPurify.sanitize(html);
+});
 
 
 function onFileChange(event: Event) {
-  const target = event.target as HTMLInputElement;
-  const selectedFile = target.files?.[0];
-  if (!selectedFile) return;
+    const target = event.target as HTMLInputElement;
+    const selectedFile = target.files?.[0];
+    if (!selectedFile) return;
 
-  handleFile(selectedFile);
+    handleFile(selectedFile);
 }
 
 async function uploadPdf() {
@@ -62,7 +72,7 @@ async function uploadPdf() {
         formData.append("file", file.value);
         formData.append("action", "process_pdf");
 
-        const res = await fetch("http://localhost:3000/api/automation", {
+        const res = await fetch("https://inter-agent-backend.vercel.app/api/automation", {
             method: "POST",
             body: formData
         });
@@ -71,7 +81,8 @@ async function uploadPdf() {
             throw new Error(`Error ${res.status}`);
         }
 
-        response.value = await res.json();
+        const apiResponse = await res.json();
+        response.value = apiResponse
     } catch (err) {
         console.error(err);
         error.value = "Error al enviar el documento";
@@ -81,33 +92,33 @@ async function uploadPdf() {
 }
 
 function handleFile(selectedFile: File) {
-  error.value = null;
-  response.value = null;
+    error.value = null;
+    response.value = null;
 
-  if (selectedFile.type !== "application/pdf") {
-    error.value = "Solo se permiten archivos PDF";
-    file.value = null;
-    return;
-  }
+    if (selectedFile.type !== "application/pdf") {
+        error.value = "Solo se permiten archivos PDF";
+        file.value = null;
+        return;
+    }
 
-  file.value = selectedFile;
+    file.value = selectedFile;
 }
 
 function onDragEnter() {
-  isDragging.value = true;
+    isDragging.value = true;
 }
 
 function onDragLeave() {
-  isDragging.value = false;
+    isDragging.value = false;
 }
 
 function onDrop(event: DragEvent) {
-  isDragging.value = false;
+    isDragging.value = false;
 
-  const droppedFile = event.dataTransfer?.files?.[0];
-  if (!droppedFile) return;
+    const droppedFile = event.dataTransfer?.files?.[0];
+    if (!droppedFile) return;
 
-  handleFile(droppedFile);
+    handleFile(droppedFile);
 }
 </script>
 
@@ -164,8 +175,8 @@ function onDrop(event: DragEvent) {
 }
 
 .file-drop.is-dragging {
-  border-color: #6366f1;
-  background-color: #1b1f27;
+    border-color: #6366f1;
+    background-color: #1b1f27;
 }
 
 .file-drop:hover {
@@ -216,5 +227,31 @@ function onDrop(event: DragEvent) {
     color: #d1d5db;
     max-height: 200px;
     overflow: auto;
+}
+
+/* Markdown component */
+.markdown-body {
+    line-height: 1.6;
+    white-space: normal;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3 {
+    margin-top: 1.2em;
+}
+
+.markdown-body pre {
+    background: #0f172a;
+    color: #e5e7eb;
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+.markdown-body code {
+    background: #e5e7eb;
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
 }
 </style>
