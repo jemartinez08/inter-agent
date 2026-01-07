@@ -1,16 +1,16 @@
 <template>
     <div class="page-container">
         <div class="uploader-card">
-            <h1 class="title">Subir documento PDF</h1>
+            <h1 class="title">Upload PDF document</h1>
             <p class="subtitle">
-                Selecciona un archivo PDF desde tu equipo y envíalo para su procesamiento.
+                Select a PDF file from your transcription file and send it for processing.
             </p>
 
             <label class="file-drop" :class="{ 'is-dragging': isDragging }" @dragenter.prevent="onDragEnter"
                 @dragover.prevent @dragleave.prevent="onDragLeave" @drop.prevent="onDrop">
                 <input type="file" accept="application/pdf" @change="onFileChange" />
                 <span v-if="!file">
-                    Haz clic para seleccionar un PDF
+                    Click to select a PDF file or drag and drop it here.
                 </span>
                 <span v-else>
                     {{ file.name }}
@@ -18,7 +18,7 @@
             </label>
 
             <button class="upload-button" :disabled="!file || loading" @click="uploadPdf">
-                {{ loading ? "Enviando..." : "Enviar PDF" }}
+                {{ loading ? "Processing..." : "Send PDF" }}
             </button>
 
             <p v-if="error" class="error">
@@ -225,7 +225,7 @@ function onDrop(event: DragEvent) {
     border-radius: 8px;
     font-size: 12px;
     color: #d1d5db;
-    max-height: 200px;
+    max-height: 300px;
     overflow: auto;
 }
 
