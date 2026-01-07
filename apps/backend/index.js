@@ -6,7 +6,7 @@ const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 app.use(cors());
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 
@@ -42,7 +42,7 @@ app.post("/api/automation", upload.single("file"), async (req, res) => {
 
     console.log(formData.get("file"));
 
-    const response = await fetch('https://mvpcs.app.n8n.cloud/webhook-test/f0b70d5f-220d-4593-b3ba-670edcbdaab6', {
+    const response = await fetch('https://mvpcs.app.n8n.cloud/webhook/f0b70d5f-220d-4593-b3ba-670edcbdaab6', {
       method: "POST",
       headers: {
         // NO setear Content-Type manualmente
