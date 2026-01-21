@@ -1,22 +1,24 @@
 <script setup lang="ts">
-import PDFUploader from './components/PDFUploader.vue';
+import SideBar from './components/SideBar.vue';
 </script>
 
 <template>
-  <PDFUploader />
+  <SideBar />
+  <main class="content">
+    <router-view />
+  </main>
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+<style>
+.content {
+  height: 100vh;
+  margin-left: 280px;
+  padding: 0px;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+
+@media (max-width: 768px) {
+  .content {
+    margin-left: 0;
+  }
 }
 </style>
