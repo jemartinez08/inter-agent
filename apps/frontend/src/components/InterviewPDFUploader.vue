@@ -1,11 +1,11 @@
 <template>
     <div class="page-container">
         <div class="uploader-card">
-            <h1 class="title">Upload PDF document</h1>
+            <h1 class="title">Upload Interview's transcription document</h1>
 
             <div class="controls-header">
                 <p class="subtitle">
-                    Select a PDF file from your transcription file and send it for processing.
+                    Select the Word file from your transcription file and send it for processing.
                 </p>
                 <button class="toggle-button" @click="open = !open" :aria-pressed="open">
                     <span>{{ open ? 'Hide' : 'Show' }}</span>
@@ -20,7 +20,7 @@
                     @dragover.prevent @dragleave.prevent="onDragLeave" @drop.prevent="onDrop">
                     <input type="file" accept="application/pdf" @change="onFileChange" />
                     <span v-if="!file">
-                        Click to select a PDF file or drag and drop it here.
+                        Click to select a Word file or drag and drop it here.
                     </span>
                     <span v-else>
                         {{ file.name }}
@@ -37,7 +37,7 @@
                         </div>
                     </template>
                     <template v-else>
-                        Send PDF
+                        Interview's transcription
                     </template>
                 </button>
 

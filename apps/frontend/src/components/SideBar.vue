@@ -4,7 +4,7 @@
 
     <aside :class="['sidebar', { open: isOpen || !isMobile }]">
         <div class="sidebar-header">
-            <h2>My App</h2>
+            <h2>RFT Manager</h2>
             <button class="close-btn" v-if="isMobile" @click="toggleSidebar">
                 ✕
             </button>

@@ -1,16 +1,18 @@
 <template>
     <div class="page-container">
         <div class="uploader-card">
-            <h1 class="title">Upload PDF document</h1>
+            <h1 class="title">Upload Candidate's resume PDF document</h1>
 
             <div class="controls-header">
                 <p class="subtitle">
-                    Select a PDF file from your transcription file and send it for processing.
+                    Select a PDF from candidate's resume file and send it for processing.
                 </p>
                 <button class="toggle-button" @click="open = !open" :aria-pressed="open">
                     <span>{{ open ? 'Hide' : 'Show' }}</span>
-                    <svg class="chev" :class="{ 'open': open }" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <svg class="chev" :class="{ 'open': open }" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
                     </svg>
                 </button>
             </div>
@@ -37,7 +39,7 @@
                         </div>
                     </template>
                     <template v-else>
-                        Send PDF
+                        Send Resume
                     </template>
                 </button>
 
@@ -128,10 +130,10 @@ async function uploadPdf() {
 
     try {
         const formData = new FormData();
-        formData.append("file", file.value);
+        formData.append("cv", file.value);
         formData.append("action", "process_pdf");
 
-        const res = await fetch("https://inter-agent-backend.vercel.app/api/automation", {
+        const res = await fetch("http://localhost:3001/api/parse-cv", {
             method: "POST",
             body: formData
         });
@@ -231,7 +233,7 @@ function onDrop(event: DragEvent) {
 
 .toggle-button {
     background: transparent;
-    border: 1px solid rgba(148,163,184,0.12);
+    border: 1px solid rgba(148, 163, 184, 0.12);
     color: #cbd5e1;
     padding: 8px 10px;
     border-radius: 8px;
@@ -318,7 +320,7 @@ function onDrop(event: DragEvent) {
 .progress-track {
     flex: 1 1 auto;
     height: 12px;
-    background: rgba(255,255,255,0.06);
+    background: rgba(255, 255, 255, 0.06);
     border-radius: 999px;
     overflow: hidden;
 }
