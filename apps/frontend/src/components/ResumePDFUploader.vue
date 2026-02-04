@@ -17,6 +17,23 @@
                 </button>
             </div>
 
+            <div class="position-selector">
+                <label for="cybersecurity-role" class="role-label">Posición en Ciberseguridad</label>
+                <select id="cybersecurity-role" v-model="selectedRole" class="role-select">
+                    <option value="" disabled>Selecciona una posición</option>
+                    <option value="security-analyst">Security Analyst</option>
+                    <option value="penetration-tester">Penetration Tester</option>
+                    <option value="security-engineer">Security Engineer</option>
+                    <option value="soc-analyst">SOC Analyst</option>
+                    <option value="network-security">Network Security Specialist</option>
+                    <option value="incident-response">Incident Response Specialist</option>
+                    <option value="security-architect">Security Architect</option>
+                    <option value="compliance-officer">Compliance Officer</option>
+                    <option value="vulnerability-manager">Vulnerability Manager</option>
+                    <option value="forensics-analyst">Forensics Analyst</option>
+                </select>
+            </div>
+
             <div v-show="open" class="controls">
                 <label class="file-drop" :class="{ 'is-dragging': isDragging }" @dragenter.prevent="onDragEnter"
                     @dragover.prevent @dragleave.prevent="onDragLeave" @drop.prevent="onDrop">
@@ -29,7 +46,7 @@
                     </span>
                 </label>
 
-                <button class="upload-button" :disabled="!file || loading" @click="uploadPdf">
+                <button class="upload-button" :disabled="!file || !selectedRole || loading" @click="uploadPdf">
                     <template v-if="loading">
                         <div class="progress-wrap">
                             <div class="progress-track">
@@ -69,6 +86,7 @@ const response = ref<{ response: string } | null>(null);
 const isDragging = ref(false);
 const open = ref(true);
 const progress = ref(0);
+const selectedRole = ref<string>("");
 let progressTimer: number | null = null;
 
 function startProgressSimulation() {
@@ -122,7 +140,7 @@ function onFileChange(event: Event) {
 }
 
 async function uploadPdf() {
-    if (!file.value) return;
+    if (!file.value || !selectedRole.value) return;
     loading.value = true;
     error.value = null;
     response.value = null;
@@ -131,6 +149,7 @@ async function uploadPdf() {
     try {
         const formData = new FormData();
         formData.append("cv", file.value);
+        formData.append("role", selectedRole.value);
         formData.append("action", "process_pdf");
 
         const res = await fetch("http://localhost:3001/api/parse-cv", {
@@ -251,6 +270,47 @@ function onDrop(event: DragEvent) {
 
 .toggle-button .chev.open {
     transform: rotate(180deg);
+}
+
+.position-selector {
+    margin-bottom: 20px;
+}
+
+.role-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #cbd5e1;
+    margin-bottom: 8px;
+}
+
+.role-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #2a2f3a;
+    border-radius: 10px;
+    background-color: #1a1f27;
+    color: #e5e7eb;
+    font-size: 14px;
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.role-select:hover {
+    border-color: #6366f1;
+    background-color: #1b1f27;
+}
+
+.role-select:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.role-select option {
+    background-color: #161a20;
+    color: #e5e7eb;
 }
 
 .controls {
