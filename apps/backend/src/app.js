@@ -3,20 +3,30 @@ const multer = require("multer");
 const cors = require("cors");
 const axios = require("axios");
 const { extractTextFromPdf } = require("./utils/extractTextFromPdf.js");
+const { v4: uuidv4 } = require('uuid');
+
+const usersRoutes = require("./routes/users.routes");
+const candidatesRoutes = require("./routes/candidates.routes");
+const analysesRoutes = require("./routes/analyses.routes");
+const evaluationsRoutes = require("./routes/evaluations.routes");
+const rftsRoutes = require("./routes/rfts.routes");
+const documentsRoutes = require("./routes/documents.routes");
 
 const app = express();
+
+app.use(express.json());
 const upload = multer({ storage: multer.memoryStorage() });
 app.use(cors());
 
-const PORT = process.env.PORT || 3001;
+app.use("/api/users", usersRoutes);
+app.use("/api", candidatesRoutes);
+app.use("/api/analyses", analysesRoutes);
+app.use("/api", evaluationsRoutes);
+app.use("/api/rfts", rftsRoutes);
+app.use('/api', documentsRoutes);
 
-app.use(express.json());
-
+// First temporal enpoints
 // -------------------------
-app.use((req, _res, next) => {
-  console.log("Incoming:", req.method, req.url);
-  next();
-});
 
 app.get("/api/health", (req, res) => {
   console.log("Received request for /api/health");
@@ -72,7 +82,7 @@ app.post("/api/automation", upload.single("file"), async (req, res) => {
     res.json({
       success: true,
       role: role,
-      response: data
+      response: data,
     });
   } catch (error) {
     console.error("Proxy error:", error);
@@ -115,13 +125,13 @@ app.post("/api/parse-cv", upload.single("cv"), async (req, res) => {
     //       "Content-Type": "application/json",
     //       Authorization: `Bearer ${token}`,
     //     },
-    //   }); 
+    //   });
 
     //   // Aquí ya puedes enviarlo a un LLM
     //   res.json({
     //     success: true,
     //   });
-    // } catch (error) { 
+    // } catch (error) {
     //   throw {
     //     status: error.response?.status,
     //     message: error.response?.data || error.message,
@@ -135,6 +145,4 @@ app.post("/api/parse-cv", upload.single("cv"), async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`API running on port ${PORT}`);
-});
+module.exports = app;

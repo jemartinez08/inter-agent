@@ -1,1 +1,5 @@
 /node_modules
+
+# Local uploaded files
+apps/backend/storage/*
+apps/backend/test/*
