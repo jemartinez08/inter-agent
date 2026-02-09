@@ -6,13 +6,19 @@ const path = require("path");
 exports.uploadCandidateDocument = async (candidateId, file, type) => {
   const documentId = uuidv4();
 
+  // 1️⃣ Extensión original
   const extension = path.extname(file.originalname);
-  const filename = `${type.toLowerCase()}${extension}`;
 
-  const storagePath = `candidates/${candidateId}/${filename}`;
+  // 2️⃣ Nombre de archivo fijo (recomendado)
+  const filename = `document${extension}`;
 
+  // 3️⃣ Path basado en documentId (NO candidateId)
+  const storagePath = `documents/${documentId}/${filename}`;
+
+  // 4️⃣ Guardar archivo
   await storage.save(storagePath, file.buffer);
 
+  // 5️⃣ Persistir metadata
   await pool.query(
     `INSERT INTO candidate_document (
       id,
@@ -38,6 +44,27 @@ exports.uploadCandidateDocument = async (candidateId, file, type) => {
     id: documentId,
     candidate_id: candidateId,
     type,
-    file: filename,
+  };
+};
+
+exports.getDocumentForDownload = async (documentId) => {
+  const [rows] = await pool.query(
+    "SELECT * FROM candidate_document WHERE id = ?",
+    [documentId],
+  );
+
+  if (rows.length === 0) return null;
+
+  const document = rows[0];
+
+  if (!document.storage_path) {
+    throw new Error(`Document ${documentId} has no storage_path`);
+  }
+
+  const filePath = path.join(process.cwd(), "storage", document.storage_path);
+
+  return {
+    filePath,
+    document,
   };
 };

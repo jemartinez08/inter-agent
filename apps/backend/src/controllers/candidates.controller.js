@@ -10,7 +10,6 @@ exports.createCandidate = async (req, res) => {
 };
 
 exports.getCandidatesByRft = async (req, res) => {
-  console.log('Hola')
   const candidates = await service.getCandidatesByRft(req.params.rftId);
   console.log("Candidates for RFT", req.params.rftId, ":", candidates);
   res.json(candidates);
