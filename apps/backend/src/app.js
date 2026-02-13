@@ -3,7 +3,7 @@ const multer = require("multer");
 const cors = require("cors");
 const axios = require("axios");
 const { extractTextFromPdf } = require("./utils/extractTextFromPdf.js");
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 
 const usersRoutes = require("./routes/users.routes");
 const candidatesRoutes = require("./routes/candidates.routes");
@@ -14,16 +14,25 @@ const documentsRoutes = require("./routes/documents.routes");
 
 const app = express();
 
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://inter-agent-frontend.vercel.app",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  }),
+);
 app.use(express.json());
 const upload = multer({ storage: multer.memoryStorage() });
-app.use(cors());
 
 app.use("/api/users", usersRoutes);
 app.use("/api", candidatesRoutes);
 app.use("/api/analyses", analysesRoutes);
 app.use("/api", evaluationsRoutes);
 app.use("/api/rfts", rftsRoutes);
-app.use('/api', documentsRoutes);
+app.use("/api", documentsRoutes);
 
 // First temporal enpoints
 // -------------------------
