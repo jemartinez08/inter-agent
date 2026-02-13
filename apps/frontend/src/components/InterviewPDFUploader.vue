@@ -154,7 +154,7 @@ async function uploadPdf() {
         formData.append("role", selectedRole.value);
         formData.append("action", "process_pdf");
 
-        const res = await fetch("http://localhost:3001/api/automation", {
+        const res = await fetch("https://inter-agent-backend.vercel.app/api/automation", {
             method: "POST",
             body: formData
         });
