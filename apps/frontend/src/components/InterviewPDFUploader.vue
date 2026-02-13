@@ -119,8 +119,8 @@ function resetProgressLater() {
 }
 
 const renderedMarkdown = computed(() => {
-    if (!response.value) return "";
-    const textContent = response.value.response || response.value;
+    if (!response.value || !response.value.response) return "";
+    const textContent = response.value.response;
     if (!textContent || String(textContent).trim() === "") return "";
     const html: any = marked.parse(String(textContent));
     return DOMPurify.sanitize(html);
@@ -165,7 +165,7 @@ async function uploadPdf() {
 
         const apiResponse = await res.json();
         console.log("Response from API:", apiResponse);
-        response.value = apiResponse || { response: "Procesado correctamente" }
+        response.value = apiResponse.response || { response: "Procesado correctamente" }
     } catch (err) {
         console.error(err);
         error.value = "Error al enviar el documento";
